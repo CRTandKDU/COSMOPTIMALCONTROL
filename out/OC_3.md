@@ -1,0 +1,14 @@
+---
+title: Galileo Galilei
+id: 20260422240049
+types:
+  - person
+tags:
+  - XVIth
+  - XVIIth
+  - heliocentrism
+---
+
+
+Galileo di Vincenzo Bonaiuti de Galilei (15 February 1564 – 8 January 1642), commonly referred to as Galileo Galilei, was an Italian astronomer, physicist, and engineer, sometimes described as a polymath. He was born in the city of Pisa, then part of the Duchy of Florence. Galileo has been called the father of observational astronomy, modern-era classical physics, the scientific method, and modern science, see also [Wikipedia](https://en.wikipedia.org/wiki/Galileo_Galilei).
+

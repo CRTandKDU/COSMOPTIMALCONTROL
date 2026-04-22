@@ -1,0 +1,143 @@
+# -*- mode:org; mode:visual-line; -*-
+#+TITLE: Optimal Control 1950-1985
+
+#+BEGIN_COMMENT
+An Org-mode template for building cosmoscopes using [[https://cosma.arthurperret.fr/user-manual.html#creating-content-text-files-markdown][cosma]].
+
+Short of an extensive ox-backend, the initial Elisp source block
+defines a few functions to export the current Org-mode buffer to a set
+of Markdown files, formatted for cosma.
+
+1. Prepare the configuration file ~config.yml~ in the same directory.
+
+2. Prepare the Bibtex file (.bib) which needs conversion to the
+[[https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html][CSL-JSON format]]. On the command line, this is done with:
+~citeproc-js -i <bibfile> -o <jsonfile>~
+
+3. Export the Org-mode buffer with the command `M-x jmc-md-files'.
+The Org should follow these conventions:
+  - Level 1 headlines are record titles
+  - Level 1 headlines tags are cosma types
+  - TODO: Level 1 headlines ~tag~ properties are cosma tags
+  - Links exclusively used headline texts (not ids which are dynamically assigned)
+  - Paragraph texts shoud be Markdown rather than Org
+
+4. In a terminal/command windows, build the cosmoscope
+~cosma modelize --citeproc~
+
+#+END_COMMENT
+
+#+BEGIN_SRC emacs-lisp :results silent
+
+      (defvar cosma-zero-id 240000 "Start beyond 23:59:59 for id generation")
+      (defconst cosma-yaml-template "---
+      title: %s
+      id: %s
+      type: %s
+      tags:
+        - cosmoscope
+      %s---
+
+      "
+        "Template for root node and yaml headers of individual .md files.")
+
+      (defun jmc--cosma-newid ()
+        "Generates a new unique id from the current day and incremented
+      global counter."
+        (setq cosma-zero-id (1+ cosma-zero-id))
+        (let* ((now (decode-time (current-time)))
+      	 (str (format "%6d" cosma-zero-id))
+      	 (end (format "%2s%2s%2s" (substring str 0 2) (substring str 2 4) (substring str 4 6)))
+      	 )
+          (format "%04d%02d%02d%6s" (nth 5 now) (nth 4 now) (nth 3 now) end)))
+
+      (defun jmc--cosma-collect-headlines (parsed)
+        "Table of contents. Collects all level 1 headlines and assigns a unique id to each one,
+      into an association list."
+        (interactive)
+        (let ((alist nil))
+          (org-element-map parsed 'headline
+            (lambda (hl)
+      	(setq alist (append alist (list (cons (org-element-property :raw-value hl) (jmc--cosma-newid)))))))
+          ;; (with-current-buffer (get-buffer-create "*TOC*")
+          ;;   (insert (format "%s\n" alist)))
+          alist))
+
+      (defun jmc--cosma-links (str alist)
+        "Search and replace links to headlines with links to ids in `str', using toc `alist'.
+
+    Links are either `[[<headline>]]' or `[[<link-type>:<headline>]]', respectively replaced
+  by `[[<uid>|<headline>]]' or `[[<link-type>:<uid>|<headline>]]'"
+        (with-temp-buffer
+          (erase-buffer)
+          (insert str)
+          (goto-char (point-min))
+          (while (re-search-forward "\\[\\[\\([a-zA-Z0-9 \\.:]+\\)\\]\\]" nil t)
+            (let* ((arr (save-match-data (split-string (match-string 1) ":")))
+      	     (uid (if (= 1 (length arr))
+      		      (assoc (match-string 1) alist)
+      		    (assoc (cadr arr) alist))))
+      	(if uid (replace-match
+      		 (if (= 1 (length arr)) (format "%s|%s" (cdr uid) (car arr)) (format "%s:%s|%s" (car arr) (cdr uid) (cadr arr)))
+      		 nil nil nil 1))
+      	)
+            )
+          (buffer-string))
+        )
+          
+
+      (defun jmc-cosma-setid ()
+        (interactive)
+        (org-set-property "CUSTOM_ID" (jmc--cosma-newid)))
+
+      (defun jmc-md-files ()
+        (interactive)
+        (let* ((i 0)
+      	 (parsed (org-element-parse-buffer))
+      	 (toc (jmc--cosma-collect-headlines parsed))
+      	 )
+          (org-element-map parsed 'headline
+            (lambda (hl)
+      	(with-current-buffer (get-buffer-create "*md-tmp*")
+      	  (erase-buffer)
+      	  (set-buffer-file-coding-system 'utf-8)
+      	  (prefer-coding-system 'utf-8)
+      	  (set-default-coding-systems 'utf-8)
+      	  (set-language-environment 'utf-8)
+      	  (set-selection-coding-system 'utf-8)
+      	  (insert (if (org-element-property :CUSTOM_ID hl)
+      		      (format "---\ntitle: %s\nid: %s\ntypes:\n"
+      			      (org-element-property :raw-value hl)
+      			      (org-element-property :CUSTOM_ID hl))
+      		      (format "---\ntitle: %s\nid: %s\ntypes:\n"
+      			      (org-element-property :raw-value hl)
+      			      (cdr (assoc (org-element-property :raw-value hl) toc)))
+      		      ))
+      	  (dolist (typ (org-element-property :tags hl))
+      	    (insert (format "  - %s\n" typ)))
+      	  (insert "---\n\n"))
+      	;; Fill content one paragraph at a time, skipping drawers
+      	(org-element-map (org-element-contents hl) 'paragraph
+      	  (lambda (para)
+      	    (let ((str (buffer-substring-no-properties (org-element-property :contents-begin para)
+      						       (org-element-property :contents-end para))))
+      	      (with-current-buffer (get-buffer-create "*md-tmp*")
+      		(insert (format "\n%s\n" (jmc--cosma-links str toc)))))))
+      	;; Save file, hopefully with utf-8 encoding (see above)
+      	(with-current-buffer (get-buffer-create "*md-tmp*")
+      	  (write-file (format ".\\out\\OC_%d.md" i))
+      	  (kill-buffer))
+      	(setq i (1+ i))
+      	))
+          ))
+
+#+END_SRC
+
+* Optimal Control                                                     :maths:
+Optimal control (OC) is one of several applications and extensions of the calculus of variations (CV). It deals with finding control time functions (histories) or control feedbackgains that minimize a performance index with differential equation consttraints. CV also deals with functions of more than one variable and is used to postulate variational principles in physics.
+
+Herman H. Goldstine, a former assistant to [[contributeur:Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
+
+* Gilbert A. Bliss                                                   :person:
+Gilbert Ames Bliss, (May, 9 1876 – May 8, 1951), was an American mathematician, known for his work on the calculus of variations, see also: [Wikipedia](https://en.wikipedia.org/wiki/Gilbert_Ames_Bliss).
+
