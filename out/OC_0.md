@@ -1,13 +1,16 @@
 ---
 title: Optimal Control
-id: 20260422240046
+id: 20260422240050
 types:
   - maths
 ---
 
 
+Source for this cosmoscope: [@Bryson_1996].
+
+
 Optimal control (OC) is one of several applications and extensions of the calculus of variations (CV). It deals with finding control time functions (histories) or control feedbackgains that minimize a performance index with differential equation consttraints. CV also deals with functions of more than one variable and is used to postulate variational principles in physics.
 
 
-Herman H. Goldstine, a former assistant to [[contributeur:20260422240047|Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
+Herman H. Goldstine, a former assistant to [[contributeur:20260422240051|Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
 

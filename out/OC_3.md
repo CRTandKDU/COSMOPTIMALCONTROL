@@ -1,6 +1,6 @@
 ---
 title: Galileo Galilei
-id: 20260422240049
+id: 20260422240053
 types:
   - person
 tags:

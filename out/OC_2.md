@@ -1,6 +1,6 @@
 ---
 title: Pierre de Fermat
-id: 20260422240048
+id: 20260422240052
 types:
   - person
 tags:

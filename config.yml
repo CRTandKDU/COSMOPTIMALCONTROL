@@ -64,7 +64,7 @@ title: Optimal Control 1950-1985
 author: jmc
 description: Arthur E. Bryson Jr (1996)
 keywords: []
-csl: american-mathematical-society-numeric.csl
+csl: chicago-author-date.csl
 bibliography: terminology-bib.json
 csl_locale: locales-fr-FR.xml
 css_custom: ""
