@@ -31,13 +31,13 @@ link_types:
   contra:
     stroke: simple
     color: "#451322"
-  contributeur:
+  contributes:
     stroke: simple
     color: "#479a1b"
-  inventeur:
+  invents:
     stroke: simple
     color: "#f2b3c7"
-  promoteur:
+  promotes:
     stroke: simple
     color: "#85B0DB"
   undefined:

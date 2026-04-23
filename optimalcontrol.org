@@ -28,42 +28,33 @@ The Org should follow these conventions:
 #+END_COMMENT
 
 #+BEGIN_SRC emacs-lisp :results silent
+  (require 'yaml)
+  (defvar oxcosma-zero-id 240000 "Start beyond 23:59:59 for id generation")
+  (defvar oxcosma-config-cache nil "Cache of the parsed YAML configuration file")
 
-  (defvar cosma-zero-id 240000 "Start beyond 23:59:59 for id generation")
-  (defconst cosma-yaml-template "---
-      title: %s
-      id: %s
-      type: %s
-      tags:
-        - cosmoscope
-      %s---
-
-      "
-    "Template for root node and yaml headers of individual .md files.")
-
-  (defun jmc--cosma-newid ()
+  (defun oxcosma--newid ()
     "Generates a new unique id from the current day and incremented
       global counter."
-    (setq cosma-zero-id (1+ cosma-zero-id))
+    (setq oxcosma-zero-id (1+ oxcosma-zero-id))
     (let* ((now (decode-time (current-time)))
-      	 (str (format "%6d" cosma-zero-id))
+      	 (str (format "%6d" oxcosma-zero-id))
       	 (end (format "%2s%2s%2s" (substring str 0 2) (substring str 2 4) (substring str 4 6)))
       	 )
       (format "%04d%02d%02d%6s" (nth 5 now) (nth 4 now) (nth 3 now) end)))
 
-  (defun jmc--cosma-collect-headlines (parsed)
+  (defun oxcosma--collect-headlines (parsed)
     "Table of contents. Collects all level 1 headlines and assigns a unique id to each one,
       into an association list."
     (interactive)
     (let ((alist nil))
       (org-element-map parsed 'headline
         (lambda (hl)
-      	(setq alist (append alist (list (cons (org-element-property :raw-value hl) (jmc--cosma-newid)))))))
+      	(setq alist (append alist (list (cons (org-element-property :raw-value hl) (oxcosma--newid)))))))
       ;; (with-current-buffer (get-buffer-create "*TOC*")
       ;;   (insert (format "%s\n" alist)))
       alist))
 
-  (defun jmc--cosma-links (str alist)
+  (defun oxcosma--links (str alist)
     "Search and replace links to headlines with links to ids in `str', using toc `alist'.
 
     Links are either `[[<headline>]]' or `[[<link-type>:<headline>]]', respectively replaced
@@ -85,27 +76,27 @@ The Org should follow these conventions:
       (buffer-string))
     )
 
-  (defun jmc-cosma-setid ()
-    (interactive)
-    (org-set-property "CUSTOM_ID" (jmc--cosma-newid)))
-
-  (defun jmc--cosma-get-config (key)
-    (with-temp-buffer
-      (erase-buffer)
-      (insert-file "config.yml")
-      (let* ((parsed (yaml-parse-string (buffer-string)))
-  	   (val (gethash key parsed)))
-        (when val
-  	(set-text-properties 0 (length val) nil val)
-  	val))))
+  (defun oxcosma--get-config (key)
+    "If necessary, parses the whole config YAML file looking for `key'."
+    (if (not oxcosma-config-cache)
+        (with-temp-buffer
+  	(erase-buffer)
+  	(insert-file "config.yml")
+  	(setq oxcosma-config-cache (yaml-parse-string (buffer-string)))))
+    (let ((val (gethash key oxcosma-config-cache)))
+      (when val
+        (set-text-properties 0 (length val) nil val)
+        val)))
 
 
-  (defun jmc-md-files ()
+  (defun oxcosma-md-files ()
+    "Generates a set of markdown files, one for each level 1
+  headline, in the directory specified in the config file."
     (interactive)
     (let* ((i 0)
-  	 (files-origin (jmc--cosma-get-config 'files_origin))
+  	 (files-origin (oxcosma--get-config 'files_origin))
       	 (parsed (org-element-parse-buffer))
-      	 (toc (jmc--cosma-collect-headlines parsed))
+      	 (toc (oxcosma--collect-headlines parsed))
       	 )
       ;; Export headline content as markdown file
       (org-element-map parsed 'headline
@@ -142,7 +133,7 @@ The Org should follow these conventions:
       	    (let ((str (buffer-substring-no-properties (org-element-property :contents-begin para)
       						       (org-element-property :contents-end para))))
       	      (with-current-buffer (get-buffer-create "*md-tmp*")
-      		(insert (format "\n%s\n" (jmc--cosma-links str toc)))))))
+      		(insert (format "\n%s\n" (oxcosma--links str toc)))))))
       	;; Save file, hopefully with utf-8 encoding (see above)
       	(with-current-buffer (get-buffer-create "*md-tmp*")
       	  (write-file (format "%s\\OC_%d.md" files-origin i))
@@ -158,7 +149,7 @@ Source for this cosmoscope: [@Bryson_1996].
 
 Optimal control (OC) is one of several applications and extensions of the calculus of variations (CV). It deals with finding control time functions (histories) or control feedbackgains that minimize a performance index with differential equation consttraints. CV also deals with functions of more than one variable and is used to postulate variational principles in physics.
 
-Herman H. Goldstine, a former assistant to [[contributeur:Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
+Herman H. Goldstine, a former assistant to [[contributes:Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
 
 * Gilbert A. Bliss                                                   :person:
 :PROPERTIES:
@@ -168,15 +159,23 @@ Gilbert Ames Bliss, (May, 9 1876 – May 8, 1951), was an American mathematician
 
 ## History
 
-Goldstine suggests that the calculus of variations started with [[inventeur:Pierre de Fermat]] (1601-1665) when he postulated his principle that light travels through a sequence of optical media in minimum time (1662).
+Goldstine suggests that the calculus of variations started with [[invents:Pierre de Fermat]] (1601-1665) when he postulated his principle that light travels through a sequence of optical media in minimum time (1662).
 
-[[inventeur:Galileo Galilei]] (1564-1642) posed two problems in 1638 which were later solved by the calculus of variations:
+[[invents:Galileo Galilei]] (1564-1642) posed two problems in 1638 which were later solved by the calculus of variations:
 
 - the "brachistochrone" problem of finding the shape of a wire such that a bead sliding along it traverses the distance between the two end points in minimum time, and
    
  - the shape assumed by a "heavy chain" hanging between two points.
 
 However, Galileo's conjectures on the solutions were incorrect!
+
+[[contributes:John Bernoulli]] (1667-1748) used Fermat's ideas to solve a discrete-step version of the brachistochrone problem in 1697. Bernoulli challenged his colleagues to solve the continuous brachistochrone problem in 1699; not only did he solve it himself, but so did Leibniz (co-inventor of the calculus with Newton), his brother James, L'Hospital, and Newton (anonymously, because he disliked con troversies).
+
+[[invents:Isaac Newton]] (1642-1727) invented the calculus of variations in 1685 to find the minimum drag nose shape of a projectile, but did not publish his method until 1694.
+
+[[invents:Leonard Euler]] (1707-1783), inspired by John Bernoulli, published a treatise in 1744 called "The Method of Finding Curves that Show Some Property of Maximum or Minimum." He treated many special problems and gave the beginnings of a real theory of the calculus of variations. [[invents:Joseph Louis Lagrange]] (1736-1813) corresponded with Euler, and invented the method of "variations" which Euler generously praised and which gave the subject its name. Lagrange also invented the method of "/multipliers/" (not published until 1762); in modern nomenclature these multipliers are "sen sitivities" of the performance index to changes in the "states." Euler adopted this idea too and gave the first-order necessary conditions for a stationary solution, which today we call the Euler-Lagrange equations.
+
+[[contributes:Adrien Marie Legendre]] (1752-1833) was the first to treat the [[Second Variation]] (1786). However, it was not until 1836 that [[contributes:Karl Gustav Jacob Jacobi]] (1804-1851) gave a more insightful treatgment and discovered "conjugate points" in fields of extremals. Jacobi showed that the partial derivatives of the performance index with respect to each parameter of a family of extremals (which today we call "states") obeyed a certain differential equation. At almost the same time [[contributes:William Rowan Hamilton]] (1805-1865) published his work on least action in mechanical systems which involved two partial differential equations. Jacobi criticized Hamilton's work in 1838, showing that only one partial differential equation was required. The result is the Hamilton-Jacobi equation, which is the basis of "dynamic programming" developed by Bellman over 100 years later.
 
 * Pierre de Fermat                                                   :person:
 :PROPERTIES:
@@ -189,3 +188,184 @@ Pierre de Fermat (17 August 1601 – 12 January 1665) was a French magistrate, p
 :cosma-tags: XVIth XVIIth heliocentrism
 :END:
 Galileo di Vincenzo Bonaiuti de Galilei (15 February 1564 – 8 January 1642), commonly referred to as Galileo Galilei, was an Italian astronomer, physicist, and engineer, sometimes described as a polymath. He was born in the city of Pisa, then part of the Duchy of Florence. Galileo has been called the father of observational astronomy, modern-era classical physics, the scientific method, and modern science, see also [Wikipedia](https://en.wikipedia.org/wiki/Galileo_Galilei).
+
+* John Bernoulli                                                     :person:
+:PROPERTIES:
+:cosma-tags: XVIIth XVIIIth
+:END:
+Johann Bernoulli (also known as Jean in French or John in English; 6 August [O.S. 27 July] 1667 – 1 January 1748) was a Swiss mathematician and was one of the many prominent mathematicians in the Bernoulli family. He is known for his contributions to infinitesimal calculus and educating Leonhard Euler in the pupil's youth, see also [Wikipedia](https://en.wikipedia.org/wiki/Johann_Bernoulli).
+
+* Isaac Newton                                                       :person:
+:PROPERTIES:
+:cosma-tags: XVIIth XVIIIth mechanics optics
+:END:
+Sir Isaac Newton (4 January [O.S. 25 December] 1643 – 31 March [O.S. 20 March] 1727) was an English polymath who was a mathematician, physicist, astronomer, alchemist, theologian, author and inventor. He was a key figure in the Scientific Revolution and the Enlightenment that followed. His book Philosophiæ Naturalis Principia Mathematica (Mathematical Principles of Natural Philosophy), first published in 1687, achieved the first great unification in physics and established classical mechanics. Newton also made seminal contributions to optics, and shares credit with the German mathematician Gottfried Wilhelm Leibniz for formulating infinitesimal calculus, although he developed calculus years before Leibniz. Newton contributed to and refined the scientific method, and his work is considered the most influential in bringing forth modern science, see also [Wikipedia](https://en.wikipedia.org/wiki/Isaac_Newton).
+
+* Leonard Euler                                                      :person:
+:PROPERTIES:
+:cosma-tags: XVIIIth mechanics optics
+:END:
+Leonhard Euler (15 April 1707 – 18 September 1783) was a Swiss polymath who was active as a mathematician, physicist, astronomer, logician, geographer, music theorist and engineer. He founded the studies of graph theory and topology and made influential discoveries in many other branches of mathematics, such as analytic number theory, complex analysis, and infinitesimal calculus. He also introduced much of modern mathematical terminology and notation, including the notion of a mathematical function. He is known for his work in mechanics, fluid dynamics, optics, astronomy, and music theory. Euler has been called a "universal genius" who "was fully equipped with almost unlimited powers of imagination, intellectual gifts and extraordinary memory". He spent most of his adult life in Saint Petersburg, Russia, and in Berlin, then the capital of Prussia, see also [Wikipedia](https://en.wikipedia.org/wiki/Leonhard_Euler).
+
+* Joseph Louis Lagrange                                              :person:
+:PROPERTIES:
+:cosma-tags: XVIIIth XIXth mechanics
+:END:
+Joseph Louis Lagrange (born Giuseppe Luigi Lagrangia or Giuseppe Ludovico De la Grange Tournier; 25 January 1736 – 10 April 1813), also reported as Giuseppe Luigi Lagrange or Lagrangia, was an Italian and naturalized French mathematician, physicist and astronomer. He made significant contributions to the fields of analysis, number theory, and both classical and celestial mechanics.
+
+In 1766, on the recommendation of Leonhard Euler and d'Alembert, Lagrange succeeded Euler as the director of mathematics at the Prussian Academy of Sciences in Berlin, Prussia, where he stayed for over twenty years, producing many volumes of work and winning several prizes of the French Academy of Sciences, see also [Wikipedia](https://en.wikipedia.org/wiki/Joseph-Louis_Lagrange).
+
+* Adrien Marie Legendre                                              :person:
+:PROPERTIES:
+:cosma-tags: XVIIIth XIXth
+:END:
+Adrien-Marie Legendre (18 September 1752 – 9 January 1833) was a French mathematician who made numerous contributions to mathematics. Well-known and important concepts such as the Legendre polynomials and Legendre transformation are named after him. He is also known for his contributions to the method of least squares, and was the first to officially publish on it, though Carl Friedrich Gauss had discovered it before him, see also [Wikipedia](https://en.wikipedia.org/wiki/Adrien-Marie_Legendre).
+
+* Karl Gustav Jacob Jacobi                                           :person:
+:PROPERTIES:
+:cosma-tags: XIXth mechanics
+:END:
+Carl Gustav Jacob Jacobi (10 December 1804 – 18 February 1851) was a German mathematician who made fundamental contributions to elliptic functions, dynamics, differential equations—in particular in [[William Rowan Hamilton]]'s works—, determinants and number theory, see also: [Wikipedia](https://en.wikipedia.org/wiki/Carl_Gustav_Jacob_Jacobi).
+
+* William Rowan Hamilton                                             :person:
+:PROPERTIES:
+:cosma-tags: XIXth mechanics optics
+:END:
+Sir William Rowan Hamilton (4 August 1805 – 2 September 1865) was an Irish mathematician, physicist, and astronomer who made numerous major contributions to algebra, classical mechanics, and optics. His theoretical works and mathematical equations are considered fundamental to modern theoretical physics, particularly his reformulation of Lagrangian mechanics, see [[Joseph-Louis Lagrange]]. His research included the analysis of geometrical optics, Fourier analysis, and quaternions, the last of which made him one of the founders of modern linear algebra, see also [Wikipedia](https://en.wikipedia.org/wiki/William_Rowan_Hamilton).
+
+* Second Variation                                                    :maths:
+
+Much like for functions, at a stationary point where the first derivative is zero, the second derivative determines the nature of the stationary point; it may be negative (if the point is a maximum point), positive (if a minimum) or zero (if a saddle point). Via the second functional, it is possible to derive powerful necessary conditions for solving variational problems. (See [Introduction](https://fig.if.usp.br/~marchett/Mecanica/second_variation.pdf).
+
+## Legendre Condition
+
+A necessary condition for the functional
+
+<math display="inline">
+	<mrow>
+		<mi>J</mi>
+		<mo>(</mo>
+		<mi>y</mi>
+		<mo>)</mo>
+		<mo>=</mo>
+	</mrow>
+	<mrow>
+	<munderover>
+		<mo>&int;</mo>
+		<mi>a</mi>
+		<mi>b</mi>
+	</munderover>
+	</mrow>
+	<mrow>
+	<mi>f</mi>
+	<mo>(</mo>
+	<mi>x</mi>
+	<mo>,</mo>
+	<mi>y</mi>
+	<mo>,</mo>
+	<mi>y</mi>
+	<mo>'</mo>
+	<mo>)</mo>
+	<mo>d</mo>
+	<mi>x</mi>
+	</mrow>
+</math>
+
+to have a relative minimum (maximum) at <math display="inline"><mi>y</mi><mo>=</mo><mover><mi>y</mi><mo>&#x5E;</mo></mover></math> $y = \hat{y}(x)$ is that
+
+
+<math display="block">
+  <semantics>
+    <mtable>
+      <!-- Step one -->
+      <mtr>
+        <mtd>
+          <msup>
+            <mrow>
+              <mo>(</mo>
+              <mi>a</mi>
+              <mo>+</mo>
+              <mi>b</mi>
+              <mo>)</mo>
+            </mrow>
+            <mn>2</mn>
+          </msup>
+        </mtd>
+        <mtd>
+          <mo>=</mo>
+        </mtd>
+        <mtd>
+          <msup>
+            <mi>c</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>4</mn>
+          <mo>‧</mo>
+          <mo>(</mo>
+          <mfrac>
+            <mn>1</mn>
+            <mn>2</mn>
+          </mfrac>
+          <mi>a</mi>
+          <mi>b</mi>
+          <mo>)</mo>
+        </mtd>
+      </mtr>
+      <!-- Step two -->
+      <mtr>
+        <mtd>
+          <msup>
+            <mi>a</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>2</mn>
+          <mi>a</mi>
+          <mi>b</mi>
+          <mo>+</mo>
+          <msup>
+            <mi>b</mi>
+            <mn>2</mn>
+          </msup>
+        </mtd>
+        <mtd>
+          <mo>=</mo>
+        </mtd>
+        <mtd>
+          <msup>
+            <mi>c</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>2</mn>
+          <mi>a</mi>
+          <mi>b</mi>
+        </mtd>
+      </mtr>
+      <!-- Step three -->
+      <mtr>
+        <mtd>
+          <msup>
+            <mi>a</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <msup>
+            <mi>b</mi>
+            <mn>2</mn>
+          </msup>
+        </mtd>
+        <mtd>
+          <mo>=</mo>
+        </mtd>
+        <mtd>
+          <msup>
+            <mi>c</mi>
+            <mn>2</mn>
+          </msup>
+        </mtd>
+      </mtr>
+    </mtable>
+  </semantics>
+</math>
