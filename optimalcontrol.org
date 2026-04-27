@@ -235,7 +235,7 @@ Sir William Rowan Hamilton (4 August 1805 – 2 September 1865) was an Irish mat
 
 * Second Variation                                                    :maths:
 
-Much like for functions, at a stationary point where the first derivative is zero, the second derivative determines the nature of the stationary point; it may be negative (if the point is a maximum point), positive (if a minimum) or zero (if a saddle point). Via the second functional, it is possible to derive powerful necessary conditions for solving variational problems. (See [Introduction](https://fig.if.usp.br/~marchett/Mecanica/second_variation.pdf).
+Much like for functions, at a stationary point where the first derivative is zero, the second derivative determines the nature of the stationary point; it may be negative (if the point is a maximum point), positive (if a minimum) or zero (if a saddle point). Via the second functional, it is possible to derive powerful necessary conditions for solving variational problems [@Bliss_1916]. (See [Introduction](https://fig.if.usp.br/~marchett/Mecanica/second_variation.pdf).)
 
 ## Legendre Condition
 
@@ -271,101 +271,35 @@ A necessary condition for the functional
 	</mrow>
 </math>
 
-to have a relative minimum (maximum) at <math display="inline"><mi>y</mi><mo>=</mo><mover><mi>y</mi><mo>&#x5E;</mo></mover></math> $y = \hat{y}(x)$ is that
+to have a relative minimum (maximum) at <math display="inline"><mi>y</mi><mo>=</mo><mover><mi>y</mi><mo>&#x5E;</mo></mover></math> is that
 
-
-<math display="block">
-  <semantics>
-    <mtable>
-      <!-- Step one -->
-      <mtr>
-        <mtd>
-          <msup>
-            <mrow>
-              <mo>(</mo>
-              <mi>a</mi>
-              <mo>+</mo>
-              <mi>b</mi>
-              <mo>)</mo>
-            </mrow>
-            <mn>2</mn>
-          </msup>
-        </mtd>
-        <mtd>
-          <mo>=</mo>
-        </mtd>
-        <mtd>
-          <msup>
-            <mi>c</mi>
-            <mn>2</mn>
-          </msup>
-          <mo>+</mo>
-          <mn>4</mn>
-          <mo>‧</mo>
-          <mo>(</mo>
-          <mfrac>
-            <mn>1</mn>
-            <mn>2</mn>
-          </mfrac>
-          <mi>a</mi>
-          <mi>b</mi>
-          <mo>)</mo>
-        </mtd>
-      </mtr>
-      <!-- Step two -->
-      <mtr>
-        <mtd>
-          <msup>
-            <mi>a</mi>
-            <mn>2</mn>
-          </msup>
-          <mo>+</mo>
-          <mn>2</mn>
-          <mi>a</mi>
-          <mi>b</mi>
-          <mo>+</mo>
-          <msup>
-            <mi>b</mi>
-            <mn>2</mn>
-          </msup>
-        </mtd>
-        <mtd>
-          <mo>=</mo>
-        </mtd>
-        <mtd>
-          <msup>
-            <mi>c</mi>
-            <mn>2</mn>
-          </msup>
-          <mo>+</mo>
-          <mn>2</mn>
-          <mi>a</mi>
-          <mi>b</mi>
-        </mtd>
-      </mtr>
-      <!-- Step three -->
-      <mtr>
-        <mtd>
-          <msup>
-            <mi>a</mi>
-            <mn>2</mn>
-          </msup>
-          <mo>+</mo>
-          <msup>
-            <mi>b</mi>
-            <mn>2</mn>
-          </msup>
-        </mtd>
-        <mtd>
-          <mo>=</mo>
-        </mtd>
-        <mtd>
-          <msup>
-            <mi>c</mi>
-            <mn>2</mn>
-          </msup>
-        </mtd>
-      </mtr>
-    </mtable>
-  </semantics>
+<math>
+  <mrow>
+    <mi>R</mi>
+    <mo>(</mo><mi>x</mi><mo>)=</mo>
+  </mrow>
+  <mrow>
+    <mfrac>
+      <mrow><msup><mo>&part;</mo><mn>2</mn></msup><mi>f</mi></mrow>
+      <mrow><mo>&part;</mo><msup><mi>y'</mi><mn>2</mn></msup></mrow>
+    </mfrac>
+  </mrow>
+  <mrow>
+    <mo>(</mo>
+    <mi>x</mi>
+    <mo>,</mo>
+    <mover>
+      <mi>y</mi>
+      <mo>&#x5E;</mo>
+    </mover>
+    <mo>,</mo>
+    <mover>
+      <mi>y</mi>
+      <mo>&#x5E;</mo>
+    </mover>
+    <mo>'</mo>
+    <mo>)</mo>
+  </mrow>
 </math>
+
+be positive (negative) in <math><mo>[</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>]</mo></math>.
