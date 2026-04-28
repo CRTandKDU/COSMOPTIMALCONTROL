@@ -149,17 +149,12 @@ Source for this cosmoscope: [@Bryson_1996].
 
 Optimal control (OC) is one of several applications and extensions of the calculus of variations (CV). It deals with finding control time functions (histories) or control feedbackgains that minimize a performance index with differential equation consttraints. CV also deals with functions of more than one variable and is used to postulate variational principles in physics.
 
-Herman H. Goldstine, a former assistant to [[contributes:Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
+[[Herman H. Goldstine]], a former assistant to [[contributes:Gilbert A. Bliss]] at the University of Chicago, has written an excellent, scholarly history [@Goldstine_1980] of CV from its beginnings to the Chicago school in the early 20th century.
 
-* Gilbert A. Bliss                                                   :person:
-:PROPERTIES:
-:cosma-tags: XXth Calculus-of-Variations
-:END:
-Gilbert Ames Bliss, (May, 9 1876 – May 8, 1951), was an American mathematician, known for his work on the calculus of variations, see also: [Wikipedia](https://en.wikipedia.org/wiki/Gilbert_Ames_Bliss).
-
+* Herman H. Goldstine                                                :person:
 ## History
 
-Goldstine suggests that the calculus of variations started with [[invents:Pierre de Fermat]] (1601-1665) when he postulated his principle that light travels through a sequence of optical media in minimum time (1662).
+[Goldstine](https://en.wikipedia.org/wiki/Herman_Goldstine) suggests [@Goldstine_1980] that the calculus of variations started with [[invents:Pierre de Fermat]] (1601-1665) when he postulated his principle that light travels through a sequence of optical media in minimum time (1662).
 
 [[invents:Galileo Galilei]] (1564-1642) posed two problems in 1638 which were later solved by the calculus of variations:
 
@@ -176,6 +171,13 @@ However, Galileo's conjectures on the solutions were incorrect!
 [[invents:Leonard Euler]] (1707-1783), inspired by John Bernoulli, published a treatise in 1744 called "The Method of Finding Curves that Show Some Property of Maximum or Minimum." He treated many special problems and gave the beginnings of a real theory of the calculus of variations. [[invents:Joseph Louis Lagrange]] (1736-1813) corresponded with Euler, and invented the method of "variations" which Euler generously praised and which gave the subject its name. Lagrange also invented the method of "/multipliers/" (not published until 1762); in modern nomenclature these multipliers are "sen sitivities" of the performance index to changes in the "states." Euler adopted this idea too and gave the first-order necessary conditions for a stationary solution, which today we call the Euler-Lagrange equations.
 
 [[contributes:Adrien Marie Legendre]] (1752-1833) was the first to treat the [[Second Variation]] (1786). However, it was not until 1836 that [[contributes:Karl Gustav Jacob Jacobi]] (1804-1851) gave a more insightful treatgment and discovered "conjugate points" in fields of extremals. Jacobi showed that the partial derivatives of the performance index with respect to each parameter of a family of extremals (which today we call "states") obeyed a certain differential equation. At almost the same time [[contributes:William Rowan Hamilton]] (1805-1865) published his work on least action in mechanical systems which involved two partial differential equations. Jacobi criticized Hamilton's work in 1838, showing that only one partial differential equation was required. The result is the Hamilton-Jacobi equation, which is the basis of "dynamic programming" developed by Bellman over 100 years later.
+
+* Gilbert A. Bliss                                                   :person:
+:PROPERTIES:
+:cosma-tags: XXth Calculus-of-Variations
+:END:
+Gilbert Ames Bliss, (May, 9 1876 – May 8, 1951), was an American mathematician, known for his work on the calculus of variations, see also: [Wikipedia](https://en.wikipedia.org/wiki/Gilbert_Ames_Bliss).
+
 
 * Pierre de Fermat                                                   :person:
 :PROPERTIES:
@@ -237,7 +239,7 @@ Sir William Rowan Hamilton (4 August 1805 – 2 September 1865) was an Irish mat
 
 Much like for functions, at a stationary point where the first derivative is zero, the second derivative determines the nature of the stationary point; it may be negative (if the point is a maximum point), positive (if a minimum) or zero (if a saddle point). Via the second functional, it is possible to derive powerful necessary conditions for solving variational problems [@Bliss_1916]. (See [Introduction](https://fig.if.usp.br/~marchett/Mecanica/second_variation.pdf).)
 
-## Legendre Condition
+## Legendre Condition (see also: [[Adrien Marie Legendre]])
 
 A necessary condition for the functional
 
@@ -303,3 +305,50 @@ to have a relative minimum (maximum) at <math display="inline"><mi>y</mi><mo>=</
 </math>
 
 be positive (negative) in <math><mo>[</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>]</mo></math>.
+
+## Jacobi Condition (see also [[Karl Gustav Jacob Jacobi]])
+
+### Riccati Equation
+
+A differential equation of the general form:
+<math> <mi> y'</mi> <mo> =</mo> <mi> a</mi> <mo> (</mo> <mi> x</mi> <mo>)</mo> <msup> <mi> y</mi> <mn> 2</mn> </msup> <mo> +</mo> <mi> b</mi> <mo> (</mo> <mi> x</mi> <mo>)</mo> <mi> y</mi> <mo> +</mo> <mi> c</mi> <mo> (</mo> <mi> x</mi> <mo>)</mo> </math>
+
+When _a=0_ it reduces to a linear equation.
+
+When _c=0_ it reduces to a Bernoulli equation.
+
+One of the reasons that Riccati equations are important is that every linear, second-order, homogeneous, ordinary differential equation can be turned into a Riccati equation, and vice versa.
+
+### Jacobi Equation
+
+A Riccati equation of the general form: <math><mrow><mfrac><mo>&part;</mo><mrow><mo>&part;</mo><mi>x</mi></mrow></mfrac></mrow><mrow><mo>(</mo><mi>Ru'</mi><mo>)</mo><mo>+</mo><mo>(</mo><mi>Q'</mi><mo>-</mo><mi>P</mi><mo>)</mo><mi>u</mi><mo>=</mo><mn>0</mn></mrow></math>
+
+### Second variation
+
+Introducing the Jacobi equation into the expression of the second variation, we get:
+
+<math><msup><mi>&delta;</mi><mn>2</mn></msup> <mi>J</mi> <mo>=</mo> <msup><mi>&epsilon;</mi><mn>2</mn></msup> <munderover> <mo>&int;</mo> <mi>a</mi> <mi>b</mi> </munderover> <mi>R</mi> <msup> <mrow> <mo>(</mo> <mi>&eta;'</mi> <mo>-</mo> <mfrac> <mi>u'</mi> <mi>u</mi> </mfrac> <mi>&eta;</mi> <mo>)</mo> </mrow> <mn>2</mn> </msup> <mo>d</mo> <mi>x</mi> </math>
+
+Hence a weak sufficiency condition for <math><msup><mi>&delta;</mi><mn>2</mn></msup> <mi>J</mi></math> to be positive:
+
+- (i) _R(x)&#x2002;&gt;&#x2002;0_ for _x_ in _[a,b]_;
+- (ii) The Jacobi equation has a solution _u_ for _x_ in _[a,b]_
+  
+### Jacobi Theorem
+
+If <math><mi>y</mi><mo>=</mo><mover><mi>y</mi><mo>&#x5E;</mo></mover><mo>(</mo><mi>x</mi><mo>,</mo><mi>&alpha;</mi><mo>,</mo><mi>&beta;</mi><mo>)</mo></math> is the general solution of an Euler-Lagrange equation, with _&alpha;,&beta;_ the two constants of integration, the corresponding equation has two particular solutions:
+
+- <math> <msub><mi>u</mi><mn>1</mn></msub> <mo>=</mo> <mfrac> <mrow> <mo>&part;</mo> <mover> <mi>y</mi> <mo>&#x5E;</mo> </mover> </mrow> <mrow> <mo>&part;</mo> <mi>&alpha;</mi> </mrow> </mfrac> </math>
+- <math> <msub><mi>u</mi><mn>2</mn></msub> <mo>=</mo> <mfrac> <mrow> <mo>&part;</mo> <mover> <mi>y</mi> <mo>&#x5E;</mo> </mover> </mrow> <mrow> <mo>&part;</mo> <mi>&beta;</mi> </mrow> </mfrac> </math>  
+  
+Let us build a solution of the Jacobi equation that vanishes at _x=a_:
+
+<math><mi>&Delta;</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>a</mi><mo>)</mo><mo>=</mo><msub><mi>u</mi><mn>2</mn></msub><mo>(</mo><mi>a</mi><mo>)</mo><msub><mi>u</mi><mn>1</mn></msub><mo>(</mo><mi>x</mi><mo>)</mo><mo>-</mo><msub><mi>u</mi><mn>1</mn></msub><mo>(</mo><mi>a</mi><mo>)</mo><msub><mi>u</mi><mn>2</mn></msub><mo>(</mo><mi>x</mi><mo>)</mo></math>
+
+Hence Jacobi's Condition:
+
+A necessary condition for a relative minimum (maximum) is that
+
+<math><mi>&Delta;</mi><mo>(</mo><mi>x</mi><mo>,</mo><mi>a</mi><mo>)</mo><mo>&ne;</mo><mn>0</mn></math>
+
+for _x_ in _[a,b]_.
